@@ -34,7 +34,7 @@ proxyquire = proxyquire.noCallThru().noPreserveCache();
  * fine for the purposes of testing because the tests are just relative to an
  * ancestor location.
  */
-var PROJECT_PATH = path.resolve(__dirname, "../../../../"),
+var PROJECT_PATH = path.resolve(__dirname, "../../../../../"),
     PROJECT_DEPS_PATH = path.join(PROJECT_PATH, "node_modules");
 
 /**
@@ -648,6 +648,21 @@ describe("ConfigFile", function() {
             assert.deepEqual(config, {
                 env: {},
                 extends: "a",
+                globals: {},
+                parserOptions: {},
+                rules: {
+                    a: 2,       // from node_modules/eslint-config-a/index.js
+                    relative: 2 // from node_modules/eslint-config-a/relative.js
+                }
+            });
+        });
+
+        it("should load information from `extends` chain with relative path.", function() {
+            var config = ConfigFile.load(getFixturePath("extends-chain-2/relative.eslintrc.json"));
+
+            assert.deepEqual(config, {
+                env: {},
+                extends: "./node_modules/eslint-config-a/index.js",
                 globals: {},
                 parserOptions: {},
                 rules: {
